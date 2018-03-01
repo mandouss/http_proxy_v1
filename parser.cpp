@@ -1,5 +1,5 @@
 #include "parser.h"
-//
+// right
 //  parser.cpp
 //
 //
@@ -30,14 +30,26 @@ bool requestHead::parseRequest(std::vector<char> & buffer){
   start = curr + 1;
   curr = curr + 1;
 
+  size_t colon;
+  size_t slash;
+  if((colon = path.find(':')) != std::string::npos){
+    if((slash = path.find('/', colon)) == std::string::npos){
+      port = std::string(path, colon + 1);
+    }else{
+      port = std::string(path, colon + 1, slash - colon - 1);
+    }
+  }else{
+    port = "80";
+  }
+
   while(*newline != '\r'){
     newline++;
   }
   protocol = std::string(start, newline - start);
-
+  head = std::string(buff, newline - buff);
 
   start = newline + 8;
-  newline = newline + 2;
+  newline = newline + 8;
   while(*newline != '\r'){
     newline++;
   }
@@ -47,6 +59,9 @@ bool requestHead::parseRequest(std::vector<char> & buffer){
   std::cout<< "path: " << path << std::endl;
   std::cout<< "protocol: " << protocol << std::endl;
   std::cout<< "host: " << host << std::endl;
+  std::cout<< "head: " << head << std::endl;
+  std::cout << "port: " << port << std::endl;
+  std::cout << "-------------"<< std::endl;  
   delete buff;
   return true;
 }
@@ -58,6 +73,7 @@ bool responseHead::parseResponse(std::vector<char> & buffer){
   char* start = buff;
   char* end = strstr(start, "\r\n");
   char* line = end;
+  head = std::string(start, line - start);
   start = strchr(start, ' ') + 1;
   end = strchr(start, ' ');
   code = std::string(start, end - start);
@@ -74,9 +90,49 @@ bool responseHead::parseResponse(std::vector<char> & buffer){
   }else{
     date = "";
   }
+    if((start = strstr(line, "\r\nExpires: ")) != NULL){
+    start = strchr(start, ' ') + 1;
+    end = strstr(start, "\r\n");
+    expire = std::string(start, end - start);
+  }else{
+    expire = "";
+  }
+
+  if((start = strstr(line, "\r\nContent-Length: ")) != NULL){                  
+
+    start = strchr(start, ' ') + 1;
+    end = strstr(start, "\r\n");
+    length = std::string(start, end - start);
+  }else{
+    length = "";
+  }
+  if((start = strstr(line, "\r\nCache-Control: ")) != NULL){                  
+    start = strchr(start, ' ') + 1;
+    end = strstr(start, "\r\n");
+    cache = std::string(start, end - start);
+  }else{
+    cache = "";
+  }
+  if((start = strstr(line, "\r\nEtag: ")) != NULL){                  
+    start = strchr(start, ' ') + 1;
+    end = strstr(start, "\r\n");
+    cache = std::string(start, end - start);
+  }else{
+    cache = "";
+  }
+
   std::cout<< "code: "<< code << std::endl;
   std::cout<< "status: " << status << std::endl;
   std::cout<< "date: " << date << std::endl;
+  std::cout<< "head: " << head << std::endl;
+  std::cout<< "lenght: " << length << std::endl;
+  std::cout<< "cache: " << cache << std::endl;
+  std::cout<< "expire: " << expire << std::endl;
+  std::cout<< "age: " << age << std::endl;
+  std::cout<< "etag: " << etag << std::endl;
+  
+  std::cout << "-------------"<< std::endl;return true;
+
   return true;
 }
 /*
