@@ -16,6 +16,10 @@
 #include <string.h>
 #include <errno.h>
 #include <pthread.h>
+#include <fstream>
+#include <sys/stat.h>
+
+std::fstream logfile;
 
 class proxySocket {
  private:
