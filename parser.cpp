@@ -9,8 +9,10 @@
 bool requestHead::parseRequest(std::vector<char> & buffer){
   //bool ans = false;
   // some code that places data into buffer
-  char *buff = new char[buffer.size()];
+  char *buff = new char[buffer.size() + 1];
   std::copy(buffer.begin(), buffer.end(), buff);
+  buff[buffer.size()] = '\0';
+
   const char *start = buff;
   const char *curr = buff;
   const char *newline = buff;
@@ -27,22 +29,27 @@ bool requestHead::parseRequest(std::vector<char> & buffer){
   }
 
   path = std::string(start, curr - start);
-  start = curr + 1;
-  curr = curr + 1;
-
+  if(path.find("http://") != std::string::npos || path.find("Http://") != std::string::npos){
+    path = std::string(path, 7);
+  }
   size_t colon;
   size_t slash;
+  //std::cout << "here1";
   if((colon = path.find(':')) != std::string::npos){
+    //std::cout << "here2";
     if((slash = path.find('/', colon)) == std::string::npos){
       port = std::string(path, colon + 1);
-      path = std::string(path, 0, colon);
     }else{
       port = std::string(path, colon + 1, slash - colon - 1);
-      path = std::string(path, 0, colon);
     }
+
   }else{
+    //std::cout << "here3";
     port = "80";
   }
+  start = curr + 1;
+  curr = curr + 1;
+  
 
   while(*newline != '\r'){
     newline++;
@@ -57,6 +64,14 @@ bool requestHead::parseRequest(std::vector<char> & buffer){
   }
   host = std::string(start, newline - start);
 
+  if((colon = host.find(':')) != std::string::npos){
+    if((slash = host.find('/', colon)) == std::string::npos){
+      host = std::string(host, 0, colon);
+    }else{ 
+      host = std::string(host, 0, colon);
+    } 
+  }
+
   std::cout<< "method: "<< method << std::endl;
   std::cout<< "path: " << path << std::endl;
   std::cout<< "protocol: " << protocol << std::endl;
@@ -64,14 +79,15 @@ bool requestHead::parseRequest(std::vector<char> & buffer){
   std::cout<< "head: " << head << std::endl;
   std::cout << "port: " << port << std::endl;
   std::cout << "-------------"<< std::endl;  
-  delete buff;
+  delete[] buff;
   return true;
 }
 
 bool responseHead::parseResponse(std::vector<char> & buffer){
   // some code that places data into buffer
-  char *buff = new char[buffer.size()];
+  char *buff = new char[buffer.size() + 1];
   std::copy(buffer.begin(), buffer.end(), buff);
+  buff[buffer.size()] = '\0';
   char* start = buff;
   char* end = strstr(start, "\r\n");
   char* line = end;
@@ -118,11 +134,12 @@ bool responseHead::parseResponse(std::vector<char> & buffer){
   if((start = strstr(line, "\r\nEtag: ")) != NULL){                  
     start = strchr(start, ' ') + 1;
     end = strstr(start, "\r\n");
-    cache = std::string(start, end - start);
+    etag = std::string(start, end - start);
   }else{
-    cache = "";
+    etag = "";
   }
-
+  
+  std::cout << "-------------"<< std::endl;
   std::cout<< "code: "<< code << std::endl;
   std::cout<< "status: " << status << std::endl;
   std::cout<< "date: " << date << std::endl;
@@ -132,20 +149,21 @@ bool responseHead::parseResponse(std::vector<char> & buffer){
   std::cout<< "expire: " << expire << std::endl;
   std::cout<< "age: " << age << std::endl;
   std::cout<< "etag: " << etag << std::endl;
-  
-  std::cout << "-------------"<< std::endl;return true;
-  delete buff;
+  std::cout << "-------------"<< std::endl;
+  delete [] buff;
   return true;
 }
-
+/*
 int main(){
-  const char *msg1  = "GET /test HTTP/1.1\r\nHost: 192.241.213.46:6880\r\nUpgrade-Insecure-Requests: 1\r\n\r\n";
+  //const char *msg1  = "GET /test HTTP/1.1\r\nHost: 192.241.213.46:6880\r\nUpgrade-Insecure-Requests: 1\r\n\r\n";
   const char *msg2= "HTTP/1.x 200 OK\r\nTransfer-Encoding: chunked\r\nDate: Sat, 28 Nov 2009 04:36:25 GMT\r\n\r\n";
+  //  const char *msg1= "POST http://ocsp.digicert.com/ HTTP/1.1\r\nHost: ocsp.digicert.com\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:58.0) Gecko/20100101 Firefox/58.0\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9;q=0.8\r\nAccept-Language: en-US,en;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nContent-Length: 83\r\nContent-Type: application/ocsp-request\r\nConnection: keep-alive\r\n\r\n";
+  
   std::vector<char> vec1;
   const char* end1 = msg1 + strlen(msg1);
   vec1.insert(vec1.end(), msg1, end1);
   std::vector<char> vec2;
-  const char* end2 = msg1 + strlen(msg2);
+  const char* end2 = msg2 + strlen(msg2);
   vec2.insert(vec2.end(), msg2, end2);
   requestHead head1;
   head1.parseRequest(vec1);
@@ -153,7 +171,7 @@ int main(){
   head2.parseResponse(vec2);
   return EXIT_SUCCESS;
 }
-
+*/
 
 
 
