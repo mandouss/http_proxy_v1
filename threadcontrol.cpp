@@ -106,7 +106,22 @@ void proxy_control::recvFromServer(){
     i++;
   }while(len != 0);
   serverbuff.insert(serverbuff.end(), '\0');
-  //std::cout <<"serverbuff:"  << std::endl << serverbuff.data() << std::endl;
+
+  responseHead resHead;
+  resHead.parseResponse(serverbuff);
+  std::string tempKey = std::string(clientbuff.begin(),clientbuff.end());
+  size_t headPos = tempKey.find("\r\n");
+  std::string key = "";
+  if(headPos != std::string::npos){
+    std::string key = std::string(tempKey, headPos);
+    allocateCache(key, resHead);
+  }else{
+    std::cout << "cannot do cache, beacause cannot find url" << std::endl;
+  }
+  
+  
+  std::cout << "-------------Response Buff--------------------"<< std::endl;
+  std::cout <<"serverbuff:"  << std::endl << serverbuff.data() << std::endl;
   std::cout << "receive response from server successfully!" << std::endl;
   close(conn_socket);
 }

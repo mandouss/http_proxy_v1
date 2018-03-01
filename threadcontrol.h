@@ -11,7 +11,8 @@
 #include <pthread.h>
 #include <vector>
 #include <iostream>
-#include "parser.h"
+//#include "parser.h"
+#include "cache.h"
 #define BUFF_SIZE 104800
 
 

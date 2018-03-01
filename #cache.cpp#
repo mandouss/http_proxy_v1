@@ -62,7 +62,7 @@ std::vector<char> checkCache(requestHead head, int uid, FILE* file){
   return ans;
 }
 
-int allocateCache(std::string url, responseHead head){
+int allcocCache(std::string url, responseHead head){
   std::string cacheControl = head.get_cache();
   int status = 2;
   if(cacheControl.find("no-cache") != std::string::npos||

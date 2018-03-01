@@ -10,8 +10,8 @@ all: socket test
 #all: socket test parser cache
 #>>>>>>> dcde491c3d87f492bf8ec085e36ab371fe559990
 
-socket: socket.o threadcontrol.o parser.o
-	$(CC) $(CFLAGS) -o $@ socket.o threadcontrol.o parser.o -lpthread
+socket: socket.o threadcontrol.o parser.o cache.o
+	$(CC) $(CFLAGS) -o $@ socket.o threadcontrol.o parser.o cache.o -lpthread
 
 test: test.o
 	gcc -std=gnu99 -pedantic -Wall -ggdb3 -Werror -o $@ test.o
@@ -38,10 +38,11 @@ parser.o: parser.cpp parser.h
 threadcontrol.o: threadcontrol.cpp threadcontrol.h parser.h
 	$(CC) $(CFLAGS) -c threadcontrol.cpp
 
+
 .PHONY:clean
 #=======
-#cache.o: cache.cpp cache.h
-#	$(CC) $(CFLAGS) -c cache.cpp
+cache.o: cache.cpp cache.h
+	$(CC) $(CFLAGS) -c cache.cpp
 
 #>>>>>>> dcde491c3d87f492bf8ec085e36ab371fe559990
 clean:
