@@ -134,17 +134,23 @@ bool responseHead::parseResponse(std::vector<char> & buffer){
   std::cout<< "etag: " << etag << std::endl;
   
   std::cout << "-------------"<< std::endl;return true;
-
+  delete buff;
   return true;
 }
 
 int main(){
-  char msg1[]= "GET /test HTTP/1.1\r\nHost: 192.241.213.46:6880\r\nUpgrade-Insecure-Requests: 1\r\n\r\n";
-  char msg2[]= "HTTP/1.x 200 OK\r\nTransfer-Encoding: chunked\r\nDate: Sat, 28 Nov 2009 04:36:25 GMT\r\n\r\n";
+  const char *msg1  = "GET /test HTTP/1.1\r\nHost: 192.241.213.46:6880\r\nUpgrade-Insecure-Requests: 1\r\n\r\n";
+  const char *msg2= "HTTP/1.x 200 OK\r\nTransfer-Encoding: chunked\r\nDate: Sat, 28 Nov 2009 04:36:25 GMT\r\n\r\n";
+  std::vector<char> vec1;
+  const char* end1 = msg1 + strlen(msg1);
+  vec1.insert(vec1.end(), msg1, end1);
+  std::vector<char> vec2;
+  const char* end2 = msg1 + strlen(msg2);
+  vec2.insert(vec2.end(), msg2, end2);
   requestHead head1;
-  head1.parseRequest(msg1);
+  head1.parseRequest(vec1);
   responseHead head2;
-  head2.parseResponse(msg2);
+  head2.parseResponse(vec2);
   return EXIT_SUCCESS;
 }
 
