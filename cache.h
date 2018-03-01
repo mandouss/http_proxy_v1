@@ -15,8 +15,7 @@
 #include "parser.h"
 
 #define EXPIRE_TIME 10000.0
-
-std::unordered_map<std::string, responseHead> cache;
+extern std::unordered_map<std::string, responseHead> cache;  
 std::string getCurrTime();
 double timeDiff(std::string date1);
 std::vector<char> checkCache(requestHead head, int uid, FILE* file);

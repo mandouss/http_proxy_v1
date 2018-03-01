@@ -115,12 +115,19 @@ void proxy_control::recvFromServer(){
   std::string tempKey = std::string(clientbuff.begin(),clientbuff.end());
   size_t headPos = tempKey.find("\r\n");
   std::string key = "";
+  //std::cout << "-------------the url to cache--------------------"<< std::endl;
+  //std::cout <<"clientbuff:"  << std::endl << clientbuff.data() << std::endl;  
   if(headPos != std::string::npos){
-    std::string key = std::string(tempKey, headPos);
+    std::cout << "headPos" << headPos <<std::endl;
+    std::string key = std::string(tempKey, 0, headPos);
+    std::cout << "-------------url key--------------------"<< std::endl;   
+    std::cout << key << std::endl;
+    std::cout << "-----------------"<<std::endl;
     allocateCache(key, resHead);
   }else{
     std::cout << "cannot do cache, beacause cannot find url" << std::endl;
   }
+  
   
   
   std::cout << "-------------Response Buff--------------------"<< std::endl;

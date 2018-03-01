@@ -2,6 +2,7 @@
 #include "threadcontrol.h"
 
 pthread_mutex_t lock;
+std::unordered_map<std::string, responseHead> cache;
 
 proxySocket::proxySocket(): sockfd(-1), new_socket(-1), conn_socket(-1){
   memset(&host_info, 0, sizeof(host_info));

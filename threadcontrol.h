@@ -15,7 +15,7 @@
 #include "cache.h"
 #define BUFF_SIZE 104800
 
-
+//extern std::unordered_map<std::string, responseHead> cache; 
 /*struct _thread_arg{
   int new_socket_t; //thread's sockfd for browers
   struct sockaddr_storage server_host_t;
