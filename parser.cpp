@@ -32,6 +32,7 @@ bool requestHead::parseRequest(std::vector<char> & buffer){
 
   size_t colon;
   size_t slash;
+  std::cout << "here1";
   if((colon = path.find(':')) != std::string::npos){
     if((slash = path.find('/', colon)) == std::string::npos){
       port = std::string(path, colon + 1);
@@ -40,7 +41,9 @@ bool requestHead::parseRequest(std::vector<char> & buffer){
       port = std::string(path, colon + 1, slash - colon - 1);
       path = std::string(path, 0, colon);
     }
+    std::cout << "here";
   }else{
+    std::cout << "here";
     port = "80";
   }
 
