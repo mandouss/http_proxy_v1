@@ -1,4 +1,4 @@
-//
+//v1
 //  parser.hpp
 //
 //
@@ -33,9 +33,6 @@ class requestHead {
   std::string path;
   std::string protocol;
   std::string host;
-  //<<<<<<< HEAD
- 
-  //=======
   std::string head;
   std::string port;
   //>>>>>>> 10e9363336878e2d1fd11c8561bbda615e2a3aa7
@@ -76,6 +73,7 @@ class responseHead{
   std::string age;
   std::string etag;
   std::string head;
+  std::vector<char> body;
   //=======
   //  std::vector<char> body;
   //>>>>>>> dcde491c3d87f492bf8ec085e36ab371fe559990
@@ -112,6 +110,10 @@ class responseHead{
   std::string get_head() {
     return head;
   }
+  std::vector<char> get_body() {
+    return body;
+  }
+
   //bool parseResponse(char* buff);
   //>>>>>>> 10e9363336878e2d1fd11c8561bbda615e2a3aa7
 };
