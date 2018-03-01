@@ -1,5 +1,6 @@
 #include "threadcontrol.h"
 #include <errno.h>
+
 void proxy_control::recvFromClient(){
   int len = recv(new_socket, &clientbuff.data()[0], clientbuff.size(), 0);
   if(len < 0) {
@@ -8,6 +9,7 @@ void proxy_control::recvFromClient(){
   }
   else if(len == 0) {
     std::cout << "No request!" << std::endl;
+    //goto rec;
   }
   else {
     std::cout << "Receive request: " << std::endl << clientbuff.data() << std::endl;
@@ -17,7 +19,7 @@ void proxy_control::recvFromClient(){
 void proxy_control::connectToServer(){
   int status;
   requestHead reqHead;
-  //char port[] = "80";
+  char port[] = "80";
   int conn_status = -1;
   reqHead.parseRequest(clientbuff);
   struct addrinfo server_info;
@@ -27,7 +29,8 @@ void proxy_control::connectToServer(){
   server_info.ai_family   = AF_UNSPEC;
   server_info.ai_socktype = SOCK_STREAM;
   //server_info.ai_flags = AI_PASSIVE;
-  status = getaddrinfo(reqHead.get_host().c_str(), reqHead.get_port().c_str(), &server_info, &server_info_list);
+  //status = getaddrinfo(reqHead.get_host().c_str(), reqHead.get_port().c_str(), &server_info, &server_info_list);
+  status = getaddrinfo(reqHead.get_host().c_str(), port, &server_info, &server_info_list);
   if(status != 0){
     std::cerr << "Error: fail to analyze ip address for server" << std::endl;
     freeaddrinfo(server_info_list);
