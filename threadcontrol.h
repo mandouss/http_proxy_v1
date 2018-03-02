@@ -1,10 +1,26 @@
 #ifndef _THREADCONTROL_H__
 #define _THREADCONTROL_H__
+<<<<<<< HEAD
 #include "header.h"
 #include "parser.h"
+=======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <errno.h>
+#include <pthread.h>
+#include <vector>
+#include <iostream>
+//#include "parser.h"
+#include "cache.h"
+>>>>>>> 6e1642eb6de4d35ea8c5d98aa77585939876c152
 #define BUFF_SIZE 104800
 
-
+//extern std::unordered_map<std::string, responseHead> cache; 
 /*struct _thread_arg{
   int new_socket_t; //thread's sockfd for browers
   struct sockaddr_storage server_host_t;

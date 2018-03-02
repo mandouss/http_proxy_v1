@@ -148,8 +148,34 @@ bool proxy_control::recvFromServer(){
     i++;
   }while(len != 0);
   serverbuff.insert(serverbuff.end(), '\0');
+<<<<<<< HEAD
   std::cout <<"serverbuff:"  << std::endl << serverbuff.data() << std::endl;
   std::cout << "len: " << len <<std::endl;
+=======
+
+  responseHead resHead;
+  resHead.parseResponse(serverbuff);
+  std::string tempKey = std::string(clientbuff.begin(),clientbuff.end());
+  size_t headPos = tempKey.find("\r\n");
+  std::string key = "";
+  //std::cout << "-------------the url to cache--------------------"<< std::endl;
+  //std::cout <<"clientbuff:"  << std::endl << clientbuff.data() << std::endl;  
+  if(headPos != std::string::npos){
+    std::cout << "headPos" << headPos <<std::endl;
+    std::string key = std::string(tempKey, 0, headPos);
+    std::cout << "-------------url key--------------------"<< std::endl;   
+    std::cout << key << std::endl;
+    std::cout << "-----------------"<<std::endl;
+    allocateCache(key, resHead);
+  }else{
+    std::cout << "cannot do cache, beacause cannot find url" << std::endl;
+  }
+  
+  
+  
+  std::cout << "-------------Response Buff--------------------"<< std::endl;
+  std::cout <<"serverbuff:"  << std::endl << serverbuff.data() << std::endl;
+>>>>>>> 6e1642eb6de4d35ea8c5d98aa77585939876c152
   std::cout << "receive response from server successfully!" << std::endl;
   return true;
   //close(conn_socket);

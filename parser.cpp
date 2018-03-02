@@ -85,6 +85,9 @@ bool requestHead::parseRequest(std::vector<char> buffer){
 
 bool responseHead::parseResponse(std::vector<char> buffer){
   // some code that places data into buffer
+  for(char it : buffer){
+    body.push_back(it);
+  }
   char *buff = new char[buffer.size() + 1];
   std::copy(buffer.begin(), buffer.end(), buff);
   buff[buffer.size()] = '\0';
