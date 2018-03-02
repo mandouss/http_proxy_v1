@@ -149,9 +149,9 @@ bool proxy_control::recvFromServer(){
   }while(len != 0);
   serverbuff.insert(serverbuff.end(), '\0');
 
-  std::cout <<"serverbuff:"  << std::endl << serverbuff.data() << std::endl;
-  std::cout << "len: " << len <<std::endl;
-
+  //  std::cout <<"serverbuff:"  << std::endl << serverbuff.data() << std::endl;
+  //std::cout << "len: " << len <<std::endl;
+  /*
   responseHead resHead;
   resHead.parseResponse(serverbuff);
   std::string tempKey = std::string(clientbuff.begin(),clientbuff.end());
@@ -165,7 +165,7 @@ bool proxy_control::recvFromServer(){
     std::cout << "-------------url key--------------------"<< std::endl;   
     std::cout << key << std::endl;
     std::cout << "-----------------"<<std::endl;
-    allocateCache(key, resHead);
+    //allocateCache(key, resHead);
   }else{
     std::cout << "cannot do cache, beacause cannot find url" << std::endl;
   }
@@ -174,6 +174,7 @@ bool proxy_control::recvFromServer(){
   
   std::cout << "-------------Response Buff--------------------"<< std::endl;
   std::cout <<"serverbuff:"  << std::endl << serverbuff.data() << std::endl;
+  */  
   std::cout << "receive response from server successfully!" << std::endl;
   return true;
   //close(conn_socket);

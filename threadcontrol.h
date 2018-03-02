@@ -14,10 +14,11 @@
 #include <pthread.h>
 #include <vector>
 #include <iostream>
-//#include "parser.h"
-#include "cache.h"
+#include "parser.h"
+//#include "cache.h"
 #include <errno.h>
-
+#include "time.h"
+#include "log.h"
 #define BUFF_SIZE 104800
 
 //extern std::unordered_map<std::string, responseHead> cache; 
@@ -31,10 +32,17 @@ class thread_control{
   int new_socket_t;
   struct sockaddr_in server_host_t;
   //std::fstream logfile;
-  std::fstream & logfile;
-  thread_control(int s, struct sockaddr_in sht, std::fstream & lf): new_socket_t(s), server_host_t(sht), logfile(lf) {}
+  Log& logfile;
+  int &uid;
+ thread_control(int s, struct sockaddr_in sht, Log& lf, int &uid): new_socket_t(s), server_host_t(sht), logfile(lf),uid(uid) {}
   //thread_control(int s, struct sockaddr_in sht, std::fstream lf): new_socket_t(s), server_host_t(sht, logfile(lf));
   ~thread_control(){}
+  void increase_uid(){
+    uid++;
+  }
+  int & get_uid(){
+    return uid;
+  }
 };
 
 class proxy_control{
@@ -45,10 +53,10 @@ class proxy_control{
   struct addrinfo * server_info_list;
   std::vector<char> clientbuff;
   std::vector<char> serverbuff;
-  int uid;
+  //int uid;
   std::fstream &logfile;
  public:
- proxy_control(int s, struct sockaddr_in hil, std::fstream &lf): new_socket(s), conn_socket(-1), server_host(hil), uid(0), logfile(lf) {
+ proxy_control(int s, struct sockaddr_in hil, std::fstream &lf): new_socket(s), conn_socket(-1), server_host(hil), logfile(lf) {
     clientbuff.resize(BUFF_SIZE);
     //serverbuff.resize(sizeof(char));
     std::fill(clientbuff.begin(), clientbuff.end(), '\0');
@@ -77,9 +85,14 @@ class proxy_control{
   std::fstream & get_logfile() {
     return logfile;
   }
+  /*
   int get_uid() {
     return uid;
   }
+  void increase_uid(){
+    uid++;
+  }
+  */
   bool recvFromClient();
   bool connectToServer(requestHead & reqHead);
   bool recvFromServer();

@@ -22,7 +22,7 @@
 
 #include "parser.h"
 #include "threadcontrol.h"
-
+#include "cache.h"
 class proxySocket {
  private:
   int sockfd; //initial socket for proxy setup

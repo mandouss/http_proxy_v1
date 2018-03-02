@@ -14,21 +14,17 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
-
-std::string getLocalTime(){
+/*
+std:;string getCurrTime();
+std::string getCurrTime(){
   time_t curtime;
   struct tm* loc_time;
   curtime = time(NULL);
   loc_time = localtime(&curtime);
   char* curr = asctime(loc_time);
-
-  //  printf("getLoctime is:%s\n", curr);
   std::string ans(curr);
-  //char* time = ( char* ) malloc(strlen(curr)+1);
-  //memset(time, '\0', strlen(curr)+1);
-  //strcpy(time, curr);
   return ans;
-};
+  }*/
 
 std::string getUTCTime(){
   time_t curtime;
@@ -43,9 +39,8 @@ std::string getUTCTime(){
   //memset(time, '\0', strlen(curr)+1);
   //strcpy(time, curr);
   return ans;
-};
-
-
+}
+/*
 double timeDiff(std::string date1){
   struct tm c;
   std::string curr1 = getCurrTime();
@@ -62,6 +57,6 @@ double timeDiff(std::string date1){
   //printf("curr - date in seconds is: %f\n", diff);
 
   return diff;
-};
-
+  }
+*/
 #endif

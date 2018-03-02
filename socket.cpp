@@ -88,24 +88,62 @@ void proxySocket::acceptConnect() {
 }
 
 void * multiThreadHelper(void * arg_list){
+  thread_control* thread= ((thread_control *)arg_list);
   int new_socket_tmp = ((thread_control *)arg_list) -> new_socket_t;
   bool conn_status; // check connectToServer success or failure
   bool sendserver_status;
   struct sockaddr_in server_host_tmp = ((thread_control *)arg_list) -> server_host_t;
-  proxy_control sc(new_socket_tmp, server_host_tmp, ((thread_control *)arg_list) -> logfile);
-  //Log logfile(((thread_control *)arg_list) ->logfile);
+  proxy_control sc(new_socket_tmp, server_host_tmp, (((thread_control *)arg_list) -> logfile).log);
+  Log & logfile = thread->logfile;
+  int & uid = thread->get_uid();
   requestHead reqHead;
   responseHead respHead;
+  std::string typeFlag = "";
+  int cacheExist = 0;
+  int cacheAllocateFlag = 0;
   if(!sc.recvFromClient()){
     std::cerr << "Error: Connection closed!" << std::endl;
     pthread_exit(NULL);
   }
   reqHead.parseRequest(sc.get_clientbuff());
+  
   //sc.get_clientbuff();
-
+  
   pthread_mutex_lock(&lock);
   //sc.logGetRequest();
+  logfile.recvRequest(uid, reqHead); 
 
+  typeFlag = reqHead.get_method();
+  
+
+  if(typeFlag == "GET"){
+    cacheExist = checkCache(reqHead);
+    std::cout <<"--------cacheExist------ : " << cacheExist <<std::endl;
+    if(cacheExist == 1){
+      for(auto it : cache[reqHead.get_head()].get_body()){
+	sc.get_serverbuff().push_back(it);
+      }
+      if(!sc.sendToClient()) {
+	std::cerr << "Error: Connection closed!" << std::endl;
+	pthread_exit(NULL);
+      }
+      logfile.sendResponse(uid, respHead);
+      logfile.checkCache1(uid);
+      std::cout << "Success! Connection closed!" <<std::endl;
+      logfile.tunnelClosed(uid);
+      uid++;
+      pthread_mutex_unlock(&lock);
+      pthread_exit(NULL);
+    }else if(cacheExist == 2 || cacheExist == 3){
+      logfile.checkCache2(uid,cacheExist);
+    }else if(cacheExist == 4){
+      logfile.checkCache2(uid,cacheExist);
+    }else{
+      std::cerr << "Error: Do not have request method! " << std::endl;
+      pthread_exit(NULL); 
+    }
+  }
+  
   conn_status = sc.connectToServer(reqHead);
   if(conn_status == false){
     std::cerr << "Error: Connection closed! " << std::endl;
@@ -116,20 +154,37 @@ void * multiThreadHelper(void * arg_list){
     std::cerr << "Error: Fail to send request to server. Connection closed!" << std::endl;
     pthread_exit(NULL);
   }
+  logfile.sendRequest(uid, reqHead); 
   if(!sc.recvFromServer()) {
     std::cerr << "Error: Receive from server failed. Connection closed!"  <<std::endl;
     pthread_exit(NULL);
   }
+  logfile.recvResponse(uid, respHead, reqHead); 
   respHead.parseResponse(sc.get_serverbuff());
+  std::cout <<"-------------show me the cache";
+  std::cout << typeFlag;
+  std::cout << respHead.get_status();
+  if(typeFlag == "GET" && respHead.get_status() == "OK"){
+    logfile.note(uid, "Here we try to allcate cache", respHead.get_head());
+    cacheAllocateFlag = allocateCache(reqHead.get_head(), respHead);
+    logfile.allocateCache(uid, cacheAllocateFlag, respHead);
+  }
+
+  
   if(!sc.sendToClient()) {
     std::cerr << "Error: Connection closed!" << std::endl;
     pthread_exit(NULL);
   }
+  logfile.sendResponse(uid, respHead);
+  
   std::cout << "Success! Connection closed!" <<std::endl;
   //close(sc.get_new_socket());
   //std::cout << sc.get_socket() << std::endl;
   //close(sc->get_new_socket());
   //delete sc
+  logfile.tunnelClosed(uid);
+  uid++;
+  //thread->increase_uid();
   pthread_mutex_unlock(&lock);
   pthread_exit(NULL);
 }
@@ -160,6 +215,8 @@ int main(int argc, char * argv[]) {
     std::cerr << "fail to create proxy.log!" <<std::endl;
     exit(EXIT_FAILURE);
   }
+  Log logFile(lf);
+  int uid = 0;
   //function for proxy setup as a Server
   p_socket.get_host_info(argv[1]);
   p_socket.setupServer(argv[1]);
@@ -169,10 +226,11 @@ int main(int argc, char * argv[]) {
   if(daemon_flag!= 0) {
     std::cerr << "Error: fail to create Daemon!" << std::endl;
     exit(EXIT_FAILURE);
-  }  
+  }
+  
   while(1){
     p_socket.acceptConnect();
-    thread_control arg_list(p_socket.get_new_socket(),p_socket.get_socket_addr(), lf);
+    thread_control arg_list(p_socket.get_new_socket(),p_socket.get_socket_addr(), logFile, uid);
     pthread_t thread;
     if(pthread_create(&thread, NULL, multiThreadHelper, &arg_list) != 0) {
       std::cerr << "fail to create thread!" << std::endl;

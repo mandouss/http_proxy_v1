@@ -1,7 +1,7 @@
 #include "log.h"
 
-void Log::recvRequest(int uid, requestHead& head){
-    time_t curtime;
+void Log::recvRequest(int &uid, requestHead& head){
+  time_t curtime;
   struct tm* loc_time;
   curtime = time(NULL);
   loc_time = gmtime(&curtime);
@@ -12,24 +12,55 @@ void Log::recvRequest(int uid, requestHead& head){
 }
 
 
-void Log::sendRequest(int uid, requestHead& head){
+void Log::sendRequest(int &uid, requestHead& head){
   log << uid << ": Requesting "<< head.get_head()<< " from "<< head.get_host()<< std::endl;
 }
 
-void Log::recvResponse(int uid, responseHead& head, requestHead& head2){
+void Log::recvResponse(int &uid, responseHead& head, requestHead& head2){
   log << uid << ": Received "<< head.get_head()<< " from "<< head2.get_host()<<std::endl;
 }
 
-void Log::sendResponse(int uid, responseHead& head){
+void Log::sendResponse(int &uid, responseHead& head){
   log << uid << ": Responding "<< head.get_head()<<std::endl;
 }
 
-void Log::tunnelClosed(int uid){
+void Log::tunnelClosed(int &uid){
   log << uid << ": Tunnel closed"<<std::endl;
 }
 
+void Log::checkCache1(int &uid){
+  log << uid << "in cache, valid" << std::endl;
+}
+void Log::checkCache2(int &uid,int cacheExist){
+  if(cacheExist == 2){
+    
+    log << uid << "in cache, but expired at" << std::endl;
+  }else if(cacheExist == 3){
+    log << uid << "in cache, requires validation " << std::endl;
+  }else if(cacheExist == 4){
+    log << uid << ": not in cache" << std::endl;
+  }else{
+    std::cerr << "not valid cacheflag here";
+  }
+}
+void Log::allocateCache(int uid, int cacheAllocateFlag, responseHead& head){
+  if(cacheAllocateFlag == 1){
+    log << uid << ": not cacheable because " << head.get_cache() << std::endl;
+  }else if(cacheAllocateFlag == 2){
+    log << uid << ": cached, expires at " << head.get_expire() << std::endl;;
+  }else if(cacheAllocateFlag == 3){
+    log << uid << ": cached, but requires re-validation " <<std::endl;
+  }else{
+    std::cerr << "not valid allocateCacheFlag here";
+  }
+}
+
+void Log::note(int uid, std::string s1, std::string s2){
+  log << uid << " :NOTE " << s1 << s2 << std::endl;
+}
 
 
+/*
 int main() {
   int dict_status = access("/var/log/erss/", 00); //
   if(dict_status == -1) {
@@ -69,3 +100,4 @@ int main() {
   logFile.tunnelClosed(1);
 
 }
+*/
