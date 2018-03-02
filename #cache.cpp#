@@ -1,6 +1,7 @@
 #include "cache.h"
 //#include "log.h"
 //v1
+
 std::string getCurrTime(){
   time_t curtime;
   struct tm* loc_time;
@@ -62,7 +63,7 @@ std::vector<char> checkCache(requestHead head, int uid, FILE* file){
   return ans;
 }
 
-int allcocCache(std::string url, responseHead head){
+int allocateCache(std::string url, responseHead head){
   std::string cacheControl = head.get_cache();
   int status = 2;
   if(cacheControl.find("no-cache") != std::string::npos||

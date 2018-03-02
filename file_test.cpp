@@ -1,9 +1,16 @@
 #include "log.h"
 
-
 void Log::recvRequest(int uid, requestHead& head){
-  log << uid << ": "<< head.get_head()<< " from "<< head.get_host()<< " @ "<< getCurrTime();
+    time_t curtime;
+  struct tm* loc_time;
+  curtime = time(NULL);
+  loc_time = gmtime(&curtime);
+  char* curr = asctime(loc_time);
+  std::string ans(curr);
+  
+  log << uid << ": "<< head.get_head()<< " from "<< head.get_host()<< " @ "<< ans;
 }
+
 
 void Log::sendRequest(int uid, requestHead& head){
   log << uid << ": Requesting "<< head.get_head()<< " from "<< head.get_host()<< std::endl;

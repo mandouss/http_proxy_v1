@@ -25,8 +25,10 @@
 #include <time.h>
 #include <iostream>
 
-#endif /* parser_hpp */
+ /* parser_hpp */
+
 //using namespace std
+
 class requestHead {
  private:
   std::string method;
@@ -57,7 +59,7 @@ class requestHead {
   }
   requestHead(){}
   ~requestHead(){}
-  bool parseRequest(std::vector<char> & buffer);
+  bool parseRequest(std::vector<char> buffer);
 };
 
 //HTTP response
@@ -90,7 +92,7 @@ class responseHead{
     return date;
   }
   //<<<<<<< HEAD
-  bool parseResponse(std::vector<char> & buffer);
+  bool parseResponse(std::vector<char> buffer);
   //=======
   std::string get_length() {
     return length;
@@ -117,3 +119,5 @@ class responseHead{
   //bool parseResponse(char* buff);
   //>>>>>>> 10e9363336878e2d1fd11c8561bbda615e2a3aa7
 };
+
+#endif

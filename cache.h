@@ -1,3 +1,6 @@
+#ifndef _CACHE_H
+#define _CACHE_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,5 +23,6 @@
 extern std::unordered_map<std::string, responseHead> cache;  
 //std::string getCurrTime();
 //extern double timeDiff(std::string date1);
-//std::vector<char> checkCache(requestHead head, int uid, FILE* file);
+std::vector<char> checkCache(requestHead head, int uid, FILE* file);
 int allocateCache(std::string url, responseHead head);
+#endif

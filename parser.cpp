@@ -6,7 +6,7 @@
 //  Created by xiaoyuli on 2018/2/26.
 //
 
-bool requestHead::parseRequest(std::vector<char> & buffer){
+bool requestHead::parseRequest(std::vector<char> buffer){
   //bool ans = false;
   // some code that places data into buffer
   char *buff = new char[buffer.size() + 1];
@@ -83,7 +83,7 @@ bool requestHead::parseRequest(std::vector<char> & buffer){
   return true;
 }
 
-bool responseHead::parseResponse(std::vector<char> & buffer){
+bool responseHead::parseResponse(std::vector<char> buffer){
   // some code that places data into buffer
   for(char it : buffer){
     body.push_back(it);

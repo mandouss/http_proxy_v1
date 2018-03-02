@@ -1,3 +1,6 @@
+#ifndef _LOG_H
+#define _LOG_H
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -17,8 +20,10 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <time.h>
 #include "parser.h"
 #include "time.h"
+
 class Log{
  public:
   std::fstream& log;
@@ -33,4 +38,5 @@ class Log{
   void tunnelClosed(int uid);
 };
 
-//std::string getCurrTime();
+
+#endif

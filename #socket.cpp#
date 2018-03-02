@@ -1,4 +1,4 @@
-       #include "socket.h"
+#include "socket.h"
 #include "threadcontrol.h"
 
 pthread_mutex_t lock;
@@ -116,7 +116,19 @@ int main(int argc, char * argv[]) {
     exit(EXIT_FAILURE);
   }
   proxySocket p_socket;
-
+  //file proxy.log
+  int dict_status = access("/var/log/erss/", 00);
+  if(dict_status == -1) {
+    if(mkdir("/var/log/erss/", 0777) == -1){
+      std::cerr << "fail to create dict! Please run with 'sudo'. " <<std::endl; 
+      exit(EXIT_FAILURE);
+    }
+  }
+  logfile.open("/var/log/erss/proxy.log", std::ios::in | std::ios::out | std::ios::app);
+  if(!logfile){
+    std::cerr << "fail to create proxy.log!" <<std::endl;
+    exit(EXIT_FAILURE);
+  }
   //function for proxy setup as a Server
   p_socket.get_host_info(argv[1]);
   p_socket.setupServer(argv[1]);
