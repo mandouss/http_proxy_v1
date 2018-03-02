@@ -18,8 +18,7 @@
 #include <pthread.h>
 #include <fstream>
 #include <sys/stat.h>
-
-std::fstream logfile;
+#include <stdbool.h>
 
 class proxySocket {
  private:

@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-std=c++11 -pedantic -Wall -ggdb3 -Werror #-pthread
-SOURCES=socket.cpp 
+SOURCES=socket.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=socket test
 
@@ -10,7 +10,7 @@ all: socket test
 #all: socket test parser cache
 #>>>>>>> dcde491c3d87f492bf8ec085e36ab371fe559990
 
-socket: socket.o threadcontrol.o parser.o
+socket: socket.o threadcontrol.o parser.o #cache.o
 	$(CC) $(CFLAGS) -o $@ socket.o threadcontrol.o parser.o -lpthread
 
 test: test.o
@@ -37,6 +37,7 @@ parser.o: parser.cpp parser.h
 #<<<<<<< HEAD
 threadcontrol.o: threadcontrol.cpp threadcontrol.h parser.h
 	$(CC) $(CFLAGS) -c threadcontrol.cpp
+
 
 .PHONY:clean
 #=======

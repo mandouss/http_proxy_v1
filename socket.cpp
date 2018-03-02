@@ -1,4 +1,5 @@
 #include "socket.h"
+#include "parser.h"
 #include "threadcontrol.h"
 
 pthread_mutex_t lock;
@@ -11,6 +12,9 @@ proxySocket::proxySocket(): sockfd(-1), new_socket(-1), conn_socket(-1){
 
 proxySocket::~proxySocket(){
   freeaddrinfo(host_info_list);
+  close(sockfd);
+  close(new_socket);
+  //close(conn_socket);
 }
 
 int proxySocket::get_conn_socket() {
@@ -86,16 +90,43 @@ void proxySocket::acceptConnect() {
 
 void * multiThreadHelper(void * arg_list){
   int new_socket_tmp = ((thread_control *)arg_list) -> new_socket_t;
-  //std::cout << new_socket_tmp << std::endl;  
+  bool conn_status; // check connectToServer success or failure
+  bool sendserver_status;
   struct sockaddr_in server_host_tmp = ((thread_control *)arg_list) -> server_host_t;
-  proxy_control sc(new_socket_tmp, server_host_tmp);
-  sc.recvFromClient();
-  sc.get_clientbuff();
+  proxy_control sc(new_socket_tmp, server_host_tmp, ((thread_control *)arg_list) -> logfile);
+  //Log logfile(((thread_control *)arg_list) ->logfile);
+  requestHead reqHead;
+  responseHead respHead;
+  if(!sc.recvFromClient()){
+    std::cerr << "Error: Connection closed!" << std::endl;
+    pthread_exit(NULL);
+  }
+  reqHead.parseRequest(sc.get_clientbuff());
+  //sc.get_clientbuff();
+
   pthread_mutex_lock(&lock);
-  sc.connectToServer();
-  sc.sendToServer();
-  sc.recvFromServer();
-  sc.sendToClient();
+  //sc.logGetRequest();
+
+  conn_status = sc.connectToServer(reqHead);
+  if(conn_status == false){
+    std::cerr << "Error: Connection closed! " << std::endl;
+    pthread_exit(NULL);
+  }
+  sendserver_status = sc.sendToServer();
+  if(sendserver_status == false) {
+    std::cerr << "Error: Fail to send request to server. Connection closed!" << std::endl;
+    pthread_exit(NULL);
+  }
+  if(!sc.recvFromServer()) {
+    std::cerr << "Error: Receive from server failed. Connection closed!"  <<std::endl;
+    pthread_exit(NULL);
+  }
+  respHead.parseResponse(sc.get_serverbuff());
+  if(!sc.sendToClient()) {
+    std::cerr << "Error: Connection closed!" << std::endl;
+    pthread_exit(NULL);
+  }
+  std::cout << "Success! Connection closed!" <<std::endl;
   //close(sc.get_new_socket());
   //std::cout << sc.get_socket() << std::endl;
   //close(sc->get_new_socket());
@@ -124,8 +155,9 @@ int main(int argc, char * argv[]) {
       exit(EXIT_FAILURE);
     }
   }
-  logfile.open("/var/log/erss/proxy.log", std::ios::in | std::ios::out | std::ios::app);
-  if(!logfile){
+  std::fstream lf;
+  lf.open("/var/log/erss/proxy.log", std::ios::in | std::ios::out | std::ios::app);
+  if(!lf){
     std::cerr << "fail to create proxy.log!" <<std::endl;
     exit(EXIT_FAILURE);
   }
@@ -141,13 +173,14 @@ int main(int argc, char * argv[]) {
   }  
   while(1){
     p_socket.acceptConnect();
-    thread_control arg_list(p_socket.get_new_socket(),p_socket.get_socket_addr());
+    thread_control arg_list(p_socket.get_new_socket(),p_socket.get_socket_addr(), lf);
     pthread_t thread;
     if(pthread_create(&thread, NULL, multiThreadHelper, &arg_list) != 0) {
       std::cerr << "fail to create thread!" << std::endl;
       exit(EXIT_FAILURE);
     }
   }
+  lf.close();
   //std::cout << p_socket.get_Sockfd() << std::endl;
   //std::cout << p_socket.get_S_Socket() << std::endl;
 }
