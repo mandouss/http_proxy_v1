@@ -111,10 +111,11 @@ void * multiThreadHelper(void * arg_list){
   
   pthread_mutex_lock(&lock);
   //sc.logGetRequest();
-  logfile.recvRequest(uid, reqHead); 
+  std::string clientAddress(inet_ntoa(server_host_tmp.sin_addr));
+  logfile.recvRequest(uid, reqHead, clientAddress); 
 
   typeFlag = reqHead.get_method();
-  
+  std::string expiretime ="";
 
   if(typeFlag == "GET"){
     cacheExist = checkCache(reqHead);
@@ -135,10 +136,16 @@ void * multiThreadHelper(void * arg_list){
       uid++;
       pthread_mutex_unlock(&lock);
       pthread_exit(NULL);
-    }else if(cacheExist == 2 || cacheExist == 3){
-      logfile.checkCache2(uid,cacheExist);
+    }else if(cacheExist == 2){
+      
+      if(cache.find(reqHead.get_head()) != cache.end()){
+	expiretime = cache[reqHead.get_head()].get_expire();
+      }
+      logfile.checkCache2(uid,cacheExist,expiretime); 
+    }else if(cacheExist == 3){
+      logfile.checkCache2(uid,cacheExist,expiretime);
     }else if(cacheExist == 4){
-      logfile.checkCache2(uid,cacheExist);
+      logfile.checkCache2(uid,cacheExist, expiretime);
     }else{
       std::cerr << "Error: Do not have request method! " << std::endl;
       pthread_exit(NULL); 

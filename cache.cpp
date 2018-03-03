@@ -57,11 +57,12 @@ int checkCache(requestHead& head){
       //status = 2;
       printf("in cache, but expired");
       std::cout << diff << std::endl;
-      return 2; //"in cache, but expired at"
+      //return 2; //"in cache, but expired at"
       }else{
 	std::cout << "not sure about the cache validation, so do not use cache";
-	return 3;
+	//return 3;
       }
+      return 2;
     }
     else{
       return 1;  //" in cache, valid"

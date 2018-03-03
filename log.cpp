@@ -1,6 +1,6 @@
 #include "log.h"
 
-void Log::recvRequest(int &uid, requestHead& head){
+void Log::recvRequest(int &uid, requestHead& head, std::string clientAddress){
   time_t curtime;
   struct tm* loc_time;
   curtime = time(NULL);
@@ -8,7 +8,7 @@ void Log::recvRequest(int &uid, requestHead& head){
   char* curr = asctime(loc_time);
   std::string ans(curr);
   
-  log << uid << ": \""<< head.get_head()<< "\" from "<< head.get_host()<< " @ "<< ans;
+  log << uid << ": \""<< head.get_head()<< "\" from "<< clientAddress << " @ "<< ans;
 }
 
 
@@ -37,10 +37,10 @@ void Log::tunnelClosed(int &uid){
 void Log::checkCache1(int &uid){
   log << uid << "in cache, valid" << std::endl;
 }
-void Log::checkCache2(int &uid,int cacheExist){
+void Log::checkCache2(int &uid,int cacheExist, std::string expiretime){
   if(cacheExist == 2){
     
-    log << uid << "in cache, but expired at" << std::endl;
+    log << uid << "in cache, but expired at" << expiretime << std::endl;
   }else if(cacheExist == 3){
     log << uid << "in cache, requires validation " << std::endl;
   }else if(cacheExist == 4){

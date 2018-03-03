@@ -29,13 +29,13 @@ class Log{
   std::fstream& log;
   Log(std::fstream &log): log(log){}
   ~Log(){}
-  void recvRequest(int &uid, requestHead& head);
+  void recvRequest(int &uid, requestHead& head,std::string clientAddress);
   void sendRequest(int &uid, requestHead& head);
   void recvResponse(int &uid, responseHead& head, requestHead& head2);
   void sendResponse(int &uid, responseHead& head);
   void tunnelClosed(int &luid);
   void checkCache1(int &uid);
-  void checkCache2(int &uid,int cacheExist);
+  void checkCache2(int &uid,int cacheExist, std::string expiretime);
   void allocateCache(int uid, int cacheAllocateFlag, responseHead& head);
   void note(int uid, std::string s1, std::string s2);
 };
