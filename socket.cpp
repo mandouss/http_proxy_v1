@@ -120,6 +120,7 @@ void * multiThreadHelper(void * arg_list){
     cacheExist = checkCache(reqHead);
     std::cout <<"--------cacheExist------ : " << cacheExist <<std::endl;
     if(cacheExist == 1){
+      std::cout <<"---------use cache to do return to client"<<std::endl;
       for(auto it : cache[reqHead.get_head()].get_body()){
 	sc.get_serverbuff().push_back(it);
       }
@@ -159,11 +160,12 @@ void * multiThreadHelper(void * arg_list){
     std::cerr << "Error: Receive from server failed. Connection closed!"  <<std::endl;
     pthread_exit(NULL);
   }
-  logfile.recvResponse(uid, respHead, reqHead); 
+  
   respHead.parseResponse(sc.get_serverbuff());
-  std::cout <<"-------------show me the cache";
-  std::cout << typeFlag;
-  std::cout << respHead.get_status();
+  logfile.recvResponse(uid, respHead, reqHead); 
+  //  std::cout <<"-------------show me the cache";
+  //std::cout << typeFlag;
+  //std::cout << respHead.get_status();
   if(typeFlag == "GET" && respHead.get_status() == "OK"){
     logfile.note(uid, "Here we try to allcate cache", respHead.get_head());
     cacheAllocateFlag = allocateCache(reqHead.get_head(), respHead);

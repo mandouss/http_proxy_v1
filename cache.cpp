@@ -7,9 +7,10 @@ int checkCache(requestHead& head){
   //std::vector<char> ans;
   //  int status;
       
-  if(cache.find(head.get_path()) == cache.end()){
+  if(cache.find(head.get_head()) == cache.end()){
     return 4;
   }else{
+    bool haveExpire = false; 
     time_t curtime;
     struct tm* loc_time;
     curtime = time(NULL);
@@ -18,7 +19,11 @@ int checkCache(requestHead& head){
     std::string ans(curr2);
   
     
-    std::string date1 = cache[head.get_path()].get_date();
+    std::string date1 = cache[head.get_head()].get_expire();
+    if(date1 != ""){
+      haveExpire = true;
+    }
+    
     struct tm c;
     std::string curr1 = ans;
     const char *curr = curr1.c_str();
@@ -30,23 +35,33 @@ int checkCache(requestHead& head){
     time_t date_t = mktime(&d);
     time_t curr_t = mktime(&c);
     double diff = difftime(curr_t, date_t);
-
+    std::cout << "have expire time" << date1 << std::endl;
+    std::cout << "curr time" << ans << std::endl;
+    std::cout << "Time difference we calculate" << diff << std::endl;
     //printf("curr - date in seconds is: %f\n", diff);
-    
-    std::string cache_value = cache[head.get_path()].get_cache();
-    bool needValid  = true;
+        
+    std::string cache_value = cache[head.get_head()].get_cache();
+    bool needValid  = false;
     if(cache_value != ""){
-      if(cache_value.find("revalidate") == std::string::npos){
-	needValid = false;
+      if(cache_value.find("revalidate") == std::string::npos
+	 || cache_value.find("age") == std::string::npos){
+	needValid = true;
       }
     }
-    if(diff > 0){
-      //status = 2;
-      //printf("in cache, but expired at EXPIREDTIME");
-      return 2; //"in cache, but expired at"
-    }
-    else if(needValid == true){
+    if(needValid == true){
       return 3;
+    }
+    else if(haveExpire == true){
+      
+      if(diff > 0){
+      //status = 2;
+      printf("in cache, but expired");
+      std::cout << diff << std::endl;
+      return 2; //"in cache, but expired at"
+      }else{
+	std::cout << "not sure about the cache validation, so do not use cache";
+	return 3;
+      }
     }
     else{
       return 1;  //" in cache, valid"
@@ -74,12 +89,13 @@ int allocateCache(std::string url, responseHead& head){
     status = 2;
     cache[url] = head;
   }else{
-    std::cerr << "Wrong allocate"<<std::endl;
+    status = 4;
+    std::cerr << "Do not have details about cache, so we do not cache"<<std::endl;
   }
   std::cout << "-----------demonstrate cache key ------------"<<std::endl;
   for(auto it = cache.begin(); it != cache.end(); it++){
-    std::cout << it->first<<std::endl;
-    std::cout << it->second.get_date()<<std::endl; 
+    std::cout << "key: "<<it->first<<std::endl;
+    std::cout << "expire: " << it->second.get_expire()<<std::endl; 
   }
   return status;
 }                    

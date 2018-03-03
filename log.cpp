@@ -8,16 +8,22 @@ void Log::recvRequest(int &uid, requestHead& head){
   char* curr = asctime(loc_time);
   std::string ans(curr);
   
-  log << uid << ": "<< head.get_head()<< " from "<< head.get_host()<< " @ "<< ans;
+  log << uid << ": \""<< head.get_head()<< "\" from "<< head.get_host()<< " @ "<< ans;
 }
 
 
 void Log::sendRequest(int &uid, requestHead& head){
-  log << uid << ": Requesting "<< head.get_head()<< " from "<< head.get_host()<< std::endl;
+  log << uid << ": Requesting \""<< head.get_head()<< "\" from "<< head.get_host()<< std::endl;
 }
 
 void Log::recvResponse(int &uid, responseHead& head, requestHead& head2){
-  log << uid << ": Received "<< head.get_head()<< " from "<< head2.get_host()<<std::endl;
+  log << uid << ": Received \""<< head.get_head()<< "\" from "<< head2.get_host()<<std::endl;
+  if(head.get_cache() != ""){
+    log << uid << ": NOTE Cache-Control: " << head.get_cache()<< std::endl;
+  }
+  if(head.get_etag() != ""){
+    log << uid << ": NOTE Etag: " << head.get_etag()<< std::endl;
+  }
 }
 
 void Log::sendResponse(int &uid, responseHead& head){
@@ -50,13 +56,13 @@ void Log::allocateCache(int uid, int cacheAllocateFlag, responseHead& head){
     log << uid << ": cached, expires at " << head.get_expire() << std::endl;;
   }else if(cacheAllocateFlag == 3){
     log << uid << ": cached, but requires re-validation " <<std::endl;
-  }else{
-    std::cerr << "not valid allocateCacheFlag here";
+  }else if(cacheAllocateFlag == 4){
+    log << uid << "Note: No details about cache, choose not to cache" <<std::endl;
   }
 }
 
 void Log::note(int uid, std::string s1, std::string s2){
-  log << uid << " :NOTE " << s1 << s2 << std::endl;
+  log << uid << ": NOTE " << s1 << " " << s2 << std::endl;
 }
 
 

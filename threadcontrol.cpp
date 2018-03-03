@@ -125,8 +125,8 @@ bool proxy_control::recvFromServer(){
     std::fill(buff.begin(), buff.end(), '\0');
     //std::vector<char>::iterator it = serverbuff.begin() + serverbuff.size();
     len = recv(conn_socket, &buff.data()[0], BUFF_SIZE, 0);
-    std::cout << i << ":buff:" << std::endl << buff.data() <<std::endl;
-    std :: cout << "len:" << len << std::endl;
+    //    std::cout << i << ":buff:" << std::endl << buff.data() <<std::endl;
+    //    std :: cout << "len:" << len << std::endl;
     if(len < 0){
       if(serverbuff.size() == 0){
 	std::cerr << "Error: fail to receive response from server!" << std::endl;
