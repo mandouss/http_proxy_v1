@@ -15,14 +15,13 @@
 int main(int argc, char const *argv[])
 {
   std::vector<std::string> set;
-  set.push_back("GET http://www.cplusplus.com/reference/unordered_map/unordered_map/ HTTP/1.1\r\nHost: www.cplusplus.com\r\nProxy-Connection: Keep-Alive\r\n\r\n");
+  set.push_back("GET http://www.cplusplus.com/reference/queue/priority_queue/ HTTP/1.1\r\nHost: www.cplusplus.com\r\nProxy-Connection: Keep-Alive\r\n\r\n");
   set.push_back("GET http://www.sina.com.cn/ HTTP/1.1\r\nHost: www.sina.com.cn\r\nProxy-Connection: keep-alive\r\n\r\n");
-  set.push_back("GET http://stackoverflow.com/questions/37907986/error-in-recover-free-invalid-next-size-normal HTTP/1.1\r\nHost: stackoverflow.com\r\nProxy-Connection: Keep-Ali\
-ve\r\n\r\n");
-  set.push_back("GET http://beej.us/guide/bgnet/output/html/multipage/getaddrinfoman.html HTTP/1.1\r\nHost: beej.us\r\nProxy-Connection: Keep-Alive\r\n\r\n");
-  set.push_back("GET http://pubs.opengroup.org/onlinepubs/9699919799/functions/strncat.html HTTP/1.1\r\nHost: pubs.opengroup.org\r\nProxy-Connection: Keep-Alive\r\n\r\n");
-  set.push_back("GET http://www.gnu.org/software/gsl HTTP/1.1\r\nHost: www.gnu.org\r\nProxy-Connection: Keep-Alive\r\n\r\n");
-  set.push_back("GET http://man7.org/linux/man-pages/man3/pthread_create.3.html HTTP/1.1\r\nHost: man7.org\r\nProxy-Connection: Keep-Alive\r\n\r\n");
+  set.push_back("GET http://stackoverflow.com/questions/218384/what-is-a-nullpointerexception-and-how-do-i-fix-it HTTP/1.1\r\nHost: stackoverflow.com\r\nProxy-Connection: Keep-Alive\r\n\r\n");
+  set.push_back("GET http://beej.us/guide/bgnet/html/multi/introi.html#audience HTTP/1.1\r\nHost: beej.us\r\nProxy-Connection: Keep-Alive\r\n\r\n");
+  set.push_back("GET http://pubs.opengroup.org/onlinepubs/9699919799/functions/strlen.html HTTP/1.1\r\nHost: pubs.opengroup.org\r\nProxy-Connection: Keep-Alive\r\n\r\n");
+  set.push_back("GET http://m.news.cctv.com/2018/03/02/ARTIHXhVz5kFB9oghLHQb0FQ180302.shtml HTTP/1.1\r\nHost: www.gnu.org\r\nProxy-Connection: Keep-Alive\r\n\r\n");
+  set.push_back("GET http://man7.org/linux/man-pages/man3/pthread_create.3.html#DESCRIPTION HTTP/1.1\r\nHost: man7.org\r\nProxy-Connection: Keep-Alive\r\n\r\n");
 
   if(argc != 3){
     perror("Input port and No. of message\n");
